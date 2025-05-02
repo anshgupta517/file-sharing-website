@@ -1,5 +1,5 @@
 
-# File Sharing Website
+# File Sharing Website - Django
 
 A simple file sharing website built with Django Python.
 
