@@ -11,22 +11,29 @@ def index(request):
     else:
         return redirect('login')
     
-    
 def login(request):
     if 'user' not in request.session:
         if request.method == 'POST':
             email = request.POST['email']
-            pwd = request.POST['pwd']  # Keep reading 'pwd' from the form
-            userExists = User.objects.filter(email=email, password=pwd)  # Change 'pwd' to 'password'
-            if userExists.exists():
-                request.session["user"] = email
-                return redirect('index')
-            else:
-                messages.warning(request, "Wrong user or details.")
+            pwd = request.POST['pwd']
+            
+            try:
+                # Get the user by email first
+                user = User.objects.get(email=email)
+                
+                # Then use Django's check_password method to verify the password
+                if user.check_password(pwd):
+                    request.session["user"] = email
+                    return redirect('index')
+                else:
+                    messages.warning(request, "Incorrect password.")
+            except User.DoesNotExist:
+                messages.warning(request, "Email not registered.")
+                
         return render(request, 'login.html')
     else:
         return redirect('index')
-    
+
 def logout(request):
     del request.session['user']
     return redirect('login')
@@ -76,14 +83,25 @@ def settings(request):
 
 def file_upload(request):
     if request.method == 'POST':
+        # Check if the file exists in the request
+        if 'file_to_upload' not in request.FILES:
+            messages.warning(request, "No file selected for upload.")
+            # Re-render the form, showing the warning
+            return render(request, 'file_upload.html') 
+
+        # Proceed only if a file was actually uploaded
         title_name = request.POST['title']
         description_name = request.POST['description']
         file_name = request.FILES['file_to_upload']
 
         user_obj = User.objects.get(email=request.session['user'])
-        new_file = File_Upload.objects.create(user = user_obj, title=title_name, description=description_name, file_field = file_name)
+        # .create() already saves the object, no need for new_file.save()
+        File_Upload.objects.create(user = user_obj, title=title_name, description=description_name, file_field = file_name) 
         messages.success(request, "File is uploaded successfully!")
-        new_file.save()
+        # Redirect after successful POST to prevent re-submission
+        return redirect('file_upload') 
+
+    # Handle GET request or if POST failed validation (though validation is basic here)
     return render(request, 'file_upload.html')
 
 def delete_file(request, id):
