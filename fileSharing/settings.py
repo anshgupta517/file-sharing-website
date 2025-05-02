@@ -37,7 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'fileapp',
 ]
+
+# Configure the custom User model
+AUTH_USER_MODEL = 'fileapp.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -121,3 +125,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Add some lines of Code in Settings.py
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR/'static']
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR/'static'/'media'
