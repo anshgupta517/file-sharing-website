@@ -10,13 +10,14 @@ def index(request):
         return render(request, 'index.html', data)
     else:
         return redirect('login')
-
+    
+    
 def login(request):
     if 'user' not in request.session:
         if request.method == 'POST':
             email = request.POST['email']
-            pwd = request.POST['pwd']
-            userExists = User.objects.filter(email=email, pwd=pwd)
+            pwd = request.POST['pwd']  # Keep reading 'pwd' from the form
+            userExists = User.objects.filter(email=email, password=pwd)  # Change 'pwd' to 'password'
             if userExists.exists():
                 request.session["user"] = email
                 return redirect('index')
@@ -33,17 +34,19 @@ def logout(request):
 
 def signup(request):
     if request.method == 'POST':
-        name = request.POST['name']
+        username_from_form = request.POST['name'] 
         email = request.POST['email']
-        pwd = request.POST['pwd']
+        pwd = request.POST['pwd'] # Keep reading 'pwd' from the form
         gender = request.POST['gender']
-        if not User.objects.filter(email=email).exists():
-            create_user = User.objects.create(name=name, email=email, pwd=pwd, gender=gender)
-            create_user.save()
+
+        if User.objects.filter(email=email).exists():
+            messages.warning(request, "Email is already registered!")
+        elif User.objects.filter(username=username_from_form).exists():
+             messages.warning(request, "Username is already taken!")
+        else:
+            User.objects.create_user(username=username_from_form, email=email, password=pwd, gender=gender)
             messages.success(request, "Your account is created successfully!")
             return redirect('login')
-        else:
-            messages.warning(request, "Email is already registered!")
 
     return render(request, 'signup.html')
 
