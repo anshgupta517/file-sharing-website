@@ -1,7 +1,7 @@
 
 # File Sharing Website
 
-A simple file sharing website built with Python.
+A simple file sharing website built with Django Python.
 
 ## 🚀 About
 
