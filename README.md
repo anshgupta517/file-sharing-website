@@ -6,6 +6,9 @@ A simple file sharing website built with Django Python.
 ## 🚀 About
 
 This project provides a basic platform for users to upload and share files.
+* Implemented core features including user registration and authentication with password hashing, session-based login persistence, file uploading with metadata (title, description), and deletion capabilities.
+* Designed views to display all files and user-specific files categorized by type (image, video, audio, PDF).
+* Leveraged Django ORM for database modeling and interaction, the messages framework for user notifications, and the template engine for dynamic content rendering.
 
 ## 🛠️ Built With
 
